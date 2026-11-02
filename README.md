@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | GitHub account | Required; sign in to VS Code with the account that has Copilot access | Required; create your own private workshop repository |
 | GitHub Copilot access | Required for AI exercises; Business/Enterprise is the organizational scenario, while other eligible plans can support local exercises | Required for the chat-driven experience; portal, Git and CLI instructions remain usable without AI |
-| Repository permissions | Create a private demo repository; push branches, open and merge PRs, and manage its workflows | Same permissions, plus permission to run GitHub Actions |
+| Repository permissions | Fork this public repository; push branches, enable Issues/Actions, and open/merge PRs within your fork | Create a separate private repository, push branches, open/merge PRs and run Actions |
 | Organization policies | Organizer confirms allowed models, Chat, cloud agent, code review and Spaces; unavailable optional features can be presenter demos | Organizer confirms Actions and the workflow actions are permitted |
 | Microsoft Fabric account | Not needed | Required, in a tenant supporting Notebook/Lakehouse Git integration and deployment pipelines |
 | Fabric capacity | Not needed | Access to an **existing active capacity** suitable for these features; no new capacity is required |
@@ -71,17 +71,20 @@ do not repeatedly retry or change corporate network controls yourself.
 | Part 1 | Install the supplied development requirements: **pytest**, pinned in the starter | Synthetic CSV files and a prebuilt Python script; no Azure/Fabric access |
 | Part 2 | **No third-party packages required** for the supplied helper scripts and tests; uses `unittest` and the Python standard library | Synthetic CSV plus a notebook with the same rows embedded; Spark runs in Fabric |
 
-Create a separate virtual environment in **each attendee project**, not in the
-materials repository. Follow the setup lab for activation instructions:
+Create a separate virtual environment in **each application folder**. For Part 1,
+first enter `ws-part1-github-copilot/labs/starter` in your cloned fork; put `.venv`
+there, not at the clone root. Part 2 keeps its separate attendee project.
+Follow the setup lab for activation instructions:
 
 ```text
 python -m venv .venv
 ```
 
-After activating the Part 1 attendee environment, install and check:
+After activating the Part 1 environment, run from that starter folder:
 
 ```text
 python -m pip install -r requirements-dev.txt
+python -m pytest --version
 python -m pytest -q
 ```
 
@@ -102,7 +105,8 @@ starter scripts' dependency requirements.
 
 - [ ] VS Code Chat responds using the intended GitHub/Copilot account.
 - [ ] Python, Git and `gh` are installed; GitHub authentication works.
-- [ ] You can create a private repository and run GitHub Actions.
+- [ ] For Part 1, you can fork the public workshop and enable Issues/Actions on your fork.
+- [ ] For Part 2, you can create a separate private repository and run GitHub Actions.
 - [ ] For Part 2, Fabric sign-in, capacity access and workspace/pipeline permissions are confirmed.
 - [ ] For Part 2, GitHub tenant synchronization and the token/connection setup are ready.
 - [ ] Use only synthetic data and disposable resources; never paste credentials into chat.
@@ -117,7 +121,7 @@ notebook through Git, pull requests, validation and deployment stages.
 | Focus | Collaborate with Copilot safely while editing, testing and reviewing code | Move a reviewed change from development to Test and lab Production |
 | Workload | Tiny Python regional-sales report | Tiny Fabric sales notebook and lakehouse |
 | Main activities | Editor assistance, chat/agent modes, customization, CLI, GitHub and a capstone PR | Git integration, isolated branch workspace, PR checks, selective deployment, approval and recovery |
-| Environment | Local project and a private GitHub demo repository | Separate private repository, four Fabric workspaces and one deployment pipeline |
+| Environment | Public attendee fork; Python application stays under Part 1 `labs/starter` | Separate private repository, four Fabric workspaces and one deployment pipeline |
 | Outcome | A tested change delivered through a reviewed PR | A reviewed release verified independently in each target workspace |
 
 Part 1 is self-contained. Part 2 does not depend on completing Part 1's Python
@@ -178,23 +182,34 @@ deployment plans, service principals and automated release workflows.
 
 ## How to use this repository
 
-1. Download or clone these **materials**:
+### Part 1: fork, clone, work in starter
+
+1. On GitHub, [fork this repository](https://github.com/redhatpeter/Fabric-CICD-Workshop/fork)
+   into your own account. Keep the name `Fabric-CICD-Workshop`.
+2. Clone **your fork**, replacing `YOUR_GITHUB_LOGIN` below:
 
    ```text
-   git clone https://github.com/redhatpeter/Fabric-CICD-Workshop.git
+   git clone https://github.com/YOUR_GITHUB_LOGIN/Fabric-CICD-Workshop.git
+   cd Fabric-CICD-Workshop
+   gh repo set-default origin
+   code .
    ```
 
-2. Read the relevant lab index.
-3. Copy **only that part's `labs/starter/` contents**, including its `.gitignore`,
-   into a **new folder outside this repository**.
-4. Open only the new attendee folder in VS Code. Keep instructions available in
-   a browser or another window.
-5. Follow the setup lab to create your own private demo repository.
-6. Do not copy presenter solutions into the attendee workspace: Copilot could
-   discover the answers and complete later exercises prematurely.
+3. Keep the fork root open in VS Code. In the terminal, run
+   `cd ws-part1-github-copilot/labs/starter`, then follow
+   [GH2 setup](./ws-part1-github-copilot/labs/02-setup.md) for `.venv`, pip and pytest.
+4. Edit the existing starter directly: **no copying, `git init` or `gh repo create`**.
+   Root customizations and workflows go in the fork root, not in starter.
+5. All pushes, issues and PRs belong to **your fork**, not `redhatpeter`'s upstream.
+   The fork is public; use only synthetic data. Presenter answers are in the
+   clone, so explicitly scope agents to the current lab and avoid those answers.
 
-The public materials repository is **not** your Fabric Git-sync repository.
-Part 1 and Part 2 each use their own attendee project and repository.
+### Part 2: keep the separate private project
+
+Follow [Part 2 readiness](./ws-part2-Fabric-CICD/labs/00-readiness.md). Copy only
+Part 2's `labs/starter/` contents, including `.gitignore`, into a new folder
+outside the clone, and create its own private repository. Do not copy presenter
+solutions. The public Part 1 fork is **not** your Fabric Git-sync repository.
 
 ## Safety, cost and validation status
 

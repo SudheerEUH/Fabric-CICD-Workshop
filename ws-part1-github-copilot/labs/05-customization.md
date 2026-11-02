@@ -8,24 +8,29 @@ agent instructions and skill are short follow-ups; MCP is optional.
 
 ## Before creating files
 
-Open only the demo repository, save all edits, and start from a clean GH4 commit.
-Create the folders exactly as listed below; do not put this kit in VS Code's user
-profile or in the workshop materials. Check that filenames end in `.md`, not
-`.md.txt`. If Copilot requests approval before creating or replacing a file,
-inspect the proposed path/content and approve only the current kit change.
+Open your **fork root** in VS Code, save all edits, and start from a clean GH4
+commit. All customization paths below are relative to that root, **not**
+`ws-part1-github-copilot/labs/starter`. Do not put this kit in your user profile
+or in `presenter/templates`. Merge any existing root instructions rather than
+overwriting them. Check filenames end in `.md`, not `.md.txt`.
+
+The application and its virtual environment stay in
+`ws-part1-github-copilot/labs/starter`. Run Python commands there; when an agent
+starts at the fork root, tell it to change to that folder first. If approval is
+requested, inspect and approve only the current kit change.
 
 ## 1. Create the kit
 
-Ask Copilot to create these files **in your demo repository**, reviewing each one:
+Ask Copilot to create these files **at your fork root**, reviewing each one:
 
 | File | Request |
 | --- | --- |
-| `.github/copilot-instructions.md` | "Document Python 3.10+, type hints for new code, pytest, no extra application dependencies, and the README business rules. Before overwriting, deleting or changing permissions, show the scope and wait for approval. Never read or print credentials. Use read-only checks first." |
-| `.github/instructions/python.instructions.md` | "Create Python-specific instructions with applyTo matching all Python files. Require small functions and pytest tests for behavior changes." |
-| `AGENTS.md` | "Write short agent instructions: read README, use the project virtual environment, run python -m pytest -q, avoid unrelated changes, never inspect credentials." |
+| `.github/copilot-instructions.md` | "Scope sales work to ws-part1-github-copilot/labs/starter and read that folder's README. Document Python 3.10+, type hints, pytest, no extra application dependencies, and running Python from starter using its .venv locally. Do not read presenter answers or edit Part 2. Before overwriting, deleting or changing permissions, show scope and wait for approval. Never inspect credentials; use read-only checks first." |
+| `.github/instructions/python.instructions.md` | "Create Python-specific instructions with applyTo: ws-part1-github-copilot/labs/starter/**/*.py. Require small functions and pytest tests for behavior changes." |
+| `AGENTS.md` | "Write short root agent instructions: read ws-part1-github-copilot/labs/starter/README.md, work only on the current lab in starter, use its .venv locally, and run python -m pytest -q from starter. Cloud setup installs requirements for its own interpreter; do not assume a local .venv exists there. Do not read presenter answers, edit Part 2 or inspect credentials." |
 | `.github/agents/reviewer.agent.md` | "Create a reviewer using only the read and search tools. It must not edit, execute commands or delegate. Report concrete bugs and missing tests with file references." |
 | `.github/prompts/review-changes.prompt.md` | "Create a reusable prompt using the reviewer agent. Review an attached diff for bugs and missing tests. Return findings only; do not edit or run commands." |
-| `.github/skills/summarize-csv/SKILL.md` | "Create a summarize-csv skill with name and description frontmatter. Describe when to use it, how to run our CSV report, how to interpret the average, and how to run tests. It must not silently fix unrelated code." |
+| `.github/skills/summarize-csv/SKILL.md` | "Create a summarize-csv skill with name and description frontmatter. Use ws-part1-github-copilot/labs/starter/README.md for business rules; run the report and tests from starter using its interpreter. Explain the average; do not silently fix unrelated code." |
 
 The presenter has reference templates if generation produces invalid frontmatter.
 Review available tool names in your installed harness; tool restrictions must be
@@ -37,7 +42,7 @@ At minimum, check these frontmatter values before testing:
 # .github/instructions/python.instructions.md
 ---
 description: "Use when changing Python in the sales demo."
-applyTo: "**/*.py"
+applyTo: "ws-part1-github-copilot/labs/starter/**/*.py"
 ---
 ```
 
@@ -73,7 +78,8 @@ MCP tools. A sentence saying "read-only" is not a tool restriction.
 
 1. Start a new regular Agent chat. Ask:
 
-   **Prompt:** Add type hints and a short docstring to summarize. Follow the project instructions.
+   **Prompt:** Add type hints and a short docstring to summarize in
+   ws-part1-github-copilot/labs/starter/summarize.py. Follow the project instructions.
    Do not change calculations. Show which instruction files were applied.
 
    Review attached instruction context where available; do not rely only on the
@@ -95,27 +101,37 @@ MCP tools. A sentence saying "read-only" is not a tool restriction.
    Stop if unexpected tools are available; correct the agent configuration.
 4. In a new regular Agent chat:
 
-   **Prompt:** Use the summarize-csv skill to explain how to run data/sales.csv and
+   **Prompt:** Use the summarize-csv skill to explain how to run the starter's data/sales.csv and
    interpret the average. Do not edit anything.
 
    Check that the skill is loaded if your UI exposes that information.
    Return to regular Agent explicitly; the reviewer remains read-only. You can
    also select `/summarize-csv` if your version exposes skills as slash commands.
-5. Inspect `git diff` and run `python -m pytest -q`. Commit the kit.
+5. From the application folder, inspect `git diff` and run `python -m pytest -q`.
+   Stage the new root kit separately, then inspect the staged diff and commit:
+
+   ```text
+   git -C ../../.. add -- .github AGENTS.md
+   git diff --cached
+   ```
+
+   `git add .` inside `starter` cannot stage root customizations. Do not create a
+   second `.github` inside `starter`: it would not be the repository-level kit.
 
 If the reviewer or slash command does not appear, save the files, start a new
 chat, and check Chat's customization/configuration diagnostics if available.
 If needed, run **Developer: Reload Window** and retry. Confirm you opened the
-demo root (the folder containing `.github`), not its parent. Record discovery or
+fork root (the folder containing `.git` and `.github`), not only `starter`. Record discovery or
 tool-list failures as blocked; an assistant's claim is not proof of enforcement.
 
 ## Optional: MCP
 
 Add only an approved GitHub MCP server using VS Code's MCP setup.
-Try "List open issues in my demo repository; read-only."
+Try "List open issues in YOUR_GITHUB_LOGIN/Fabric-CICD-Workshop; read-only."
 Skip it if policy or authentication blocks it. Do not add secrets to config files.
 Specify the exact demo owner/repository in the request; an empty issue list is
-valid before GH7. This optional server is not required for `gh` or the later PRs.
+valid before GH7. Forks may need Issues enabled in **Settings > General >
+Features**. This optional server is not required for `gh` or the later PRs.
 
 **Done when:** the prompt runs, the reviewer is tool-restricted, and a small
 Python change follows the repository conventions.

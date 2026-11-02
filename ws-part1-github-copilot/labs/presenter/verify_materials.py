@@ -1,4 +1,4 @@
-"""Check copied starter/reference behavior and local links without extra packages."""
+"""Check cloned starter layout, workflow paths and local materials without packages."""
 
 from pathlib import Path
 import re
@@ -12,37 +12,77 @@ from urllib.parse import unquote
 
 LABS = Path(__file__).resolve().parents[1]
 PART1 = LABS.parent
-STARTER_ITEMS = (
-    ".gitignore",
-    "README.md",
-    "data",
-    "tests",
-    "pytest.ini",
-    "requirements-dev.txt",
-    "summarize.py",
-)
+REPO = PART1.parent
+STARTER = Path("ws-part1-github-copilot/labs/starter")
+TEMPLATES = LABS / "presenter" / "templates"
+TEMPLATE_DESTINATIONS = {
+    "copilot-instructions.md": ".github/copilot-instructions.md",
+    "python.instructions.md": ".github/instructions/python.instructions.md",
+    "AGENTS.md": "AGENTS.md",
+    "reviewer.agent.md": ".github/agents/reviewer.agent.md",
+    "review-changes.prompt.md": ".github/prompts/review-changes.prompt.md",
+    "summarize-csv/SKILL.md": ".github/skills/summarize-csv/SKILL.md",
+    "tests.yml": ".github/workflows/tests.yml",
+    "copilot-setup-steps.yml": ".github/workflows/copilot-setup-steps.yml",
+}
 
 
 class MaterialChecks(unittest.TestCase):
-    def test_starter_output_is_the_exercise_baseline(self):
+    def test_cloned_starter_baseline_and_root_assets(self):
         with tempfile.TemporaryDirectory(prefix="copilot-workshop-") as directory:
-            demo = Path(directory)
-            for name in STARTER_ITEMS:
-                source = LABS / "starter" / name
-                if source.is_dir():
-                    shutil.copytree(
-                        source,
-                        demo / name,
-                        ignore=shutil.ignore_patterns(
-                            ".git", ".venv", "__pycache__", ".pytest_cache"
-                        ),
-                    )
-                else:
-                    shutil.copyfile(source, demo / name)
-            self.assertEqual({path.name for path in demo.iterdir()}, set(STARTER_ITEMS))
+            fork = Path(directory) / "fork"
+            subprocess.run(
+                ["git", "clone", "--quiet", "--no-hardlinks", str(REPO), str(fork)],
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=30,
+            )
+            # Include working-tree starter updates, never local nested Git metadata.
+            tracked = subprocess.run(
+                ["git", "-C", str(REPO), "ls-files", "-z", "--", STARTER.as_posix()],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            for name in tracked.stdout.split("\0"):
+                if name:
+                    destination = fork / name
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copyfile(REPO / name, destination)
+            app = fork / STARTER
+            self.assertFalse((app / ".git").exists())
+            git_root = subprocess.run(
+                ["git", "rev-parse", "--show-toplevel"],
+                cwd=app,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            self.assertEqual(Path(git_root.stdout.strip()).resolve(), fork.resolve())
+            for source, target in TEMPLATE_DESTINATIONS.items():
+                destination = fork / target
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(TEMPLATES / source, destination)
+            self.assertFalse((app / ".github").exists())
+            subprocess.run(
+                ["git", "add", "--", ".github", "AGENTS.md"],
+                cwd=fork,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            staged = subprocess.run(
+                ["git", "diff", "--cached", "--name-only"],
+                cwd=app,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            self.assertEqual(set(staged.stdout.splitlines()), set(TEMPLATE_DESTINATIONS.values()))
             result = subprocess.run(
                 [sys.executable, "summarize.py", "data/sales.csv"],
-                cwd=demo,
+                cwd=app,
                 capture_output=True,
                 text=True,
                 check=False,
@@ -53,6 +93,25 @@ class MaterialChecks(unittest.TestCase):
             "East: 150.00\nNorth: 75.00\nWest: 250.00\nAverage per region: 118.75\n",
         )
         self.assertEqual(result.stderr, "")
+
+    def test_workflow_application_directories(self):
+        for name in ("tests.yml", "copilot-setup-steps.yml"):
+            text = (TEMPLATES / name).read_text(encoding="utf-8")
+            run_steps = re.findall(
+                r"(?m)^\s+- run: (.+)\n[ \t]+working-directory: (.+)$", text
+            )
+            with self.subTest(workflow=name):
+                self.assertEqual(
+                    len(run_steps), len(re.findall(r"(?m)^\s+- run:", text))
+                )
+                expected_commands = ["python -m pip install -r requirements-dev.txt"]
+                if name == "tests.yml":
+                    expected_commands.append("python -m pytest -q")
+                self.assertEqual([command for command, _ in run_steps], expected_commands)
+                for _, directory in run_steps:
+                    self.assertEqual(directory, STARTER.as_posix())
+                    self.assertTrue((REPO / directory / "requirements-dev.txt").is_file())
+                    self.assertTrue((REPO / directory / "pytest.ini").is_file())
 
     def test_reference_lab_cli_examples(self):
         cases = [

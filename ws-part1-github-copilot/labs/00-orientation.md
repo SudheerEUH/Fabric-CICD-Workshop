@@ -5,8 +5,11 @@ opens the [starter script](./starter/summarize.py); attendees can observe before
 
 Use an ordinary code editor tab, not a rendered Markdown preview. Before GH3 the
 loader is called `load`; after the rename it is `load_rows`. If you already did
-setup, use the script in your demo folder rather than editing the materials.
+setup, use `ws-part1-github-copilot/labs/starter/summarize.py` in your own fork.
+Do not open the presenter solution with the same filename.
 
+1. Walk thru overall VSCode tool
+    - models selection, settings, etc
 1. Select `load` in the editor and use inline chat:
 
    **Prompt:** Explain this function in two sentences. Do not edit anything.

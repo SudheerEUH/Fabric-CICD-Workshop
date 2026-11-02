@@ -7,14 +7,24 @@ Run `copilot --version` first. Use the current standalone **Copilot CLI**, not
 the retired `gh copilot` suggest/explain flow. If it is missing, use the
 [main guide's tool setup](../workshop-part1-github-copilot.md#21-tools-to-install);
 skip this optional lab if installation or organization policy blocks it.
-Check the shell is in the demo folder and `python -c "import sys; print(sys.executable)"`
-points to its virtual environment. Trust only that folder when prompted.
+Check the shell is in `ws-part1-github-copilot/labs/starter` and
+`python -c "import sys; print(sys.executable)"` points to its `.venv`.
 
-1. In your demo root with the virtual environment active, start `copilot`.
-   Sign in if needed. Confirm that this is the disposable demo folder.
+1. Keep that environment active, but launch CLI from the **fork root** so it
+   discovers the root kit. From the application folder run:
+
+   ```text
+   cd ../../..
+   copilot
+   ```
+
+   Sign in if needed. Trust only your reviewed fork. Paste the
+   [scope prompt](./README.md#working-conventions): Python commands must run in
+   `ws-part1-github-copilot/labs/starter`, not at the fork root.
 2. Ask for context first:
 
-   **Prompt:** Explain this project and its current tests. Do not edit anything.
+   **Prompt:** Explain the sales project in ws-part1-github-copilot/labs/starter
+   and its current tests. Do not edit anything or read presenter answers.
 
 3. Ask for a scoped change:
 
@@ -32,6 +42,9 @@ points to its virtual environment. Trust only that folder when prompted.
 4. Read proposed commands and approve only those needed for this task.
 
 ## Check
+
+Exit the CLI session first. From the fork root, return to the application folder
+with `cd ws-part1-github-copilot/labs/starter`. Keep its environment active:
 
 ```text
 python summarize.py data/sales.csv --region East

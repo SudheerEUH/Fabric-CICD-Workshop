@@ -3,11 +3,10 @@
 Build one tiny regional sales report while trying different Copilot surfaces.
 All data is synthetic. No Azure, Fabric, database or production access is needed.
 
-**Start with [GH2 setup](./02-setup.md)** before running the coding exercises.
-Copy only the contents of [starter](./starter/) into your own `copilot-workshop-demo`
-folder, following GH2's explicit file list; do not copy any local `.git` or
-environment/cache folders. Open that folder in VS Code, not this entire materials folder: otherwise
-Copilot may find the presenter answers.
+**Start with [GH2 setup](./02-setup.md)** before running the coding exercises:
+fork `redhatpeter/Fabric-CICD-Workshop`, clone **your fork**, and open the clone's
+root in VS Code. Work directly in [starter](./starter/); no file copying or
+second Git repository is needed. Your fork is public, so use synthetic data only.
 
 ## Follow this order
 
@@ -30,8 +29,14 @@ more than matching a screenshot.
 
 ## Working conventions
 
-- Commands in the labs run from your **demo repository root**.
-- After setup, `python` refers to your demo virtual environment.
+- Keep the **fork root** open in VS Code. Before running lab shell commands,
+  enter `ws-part1-github-copilot/labs/starter` (the **application folder**).
+- Python/pip/pytest commands run from the application folder; `python` refers
+  to its `.venv`, not an environment at the clone root.
+- Install the test dependency in that environment with
+  `python -m pip install -r requirements-dev.txt`, then confirm
+  `python -m pytest --version` works before attempting the exercises.
+  Creating or activating `.venv` alone does not install pytest.
 - Use a new chat when switching exercises so old requests do not carry over.
 - Before edits, inspect `git status`; after edits, inspect `git diff` and run tests.
 - Commit your work at the end of each lab. Do not merge unrelated work together.
@@ -41,6 +46,20 @@ more than matching a screenshot.
   Check each tool's account rather than changing an unrelated extension's login.
 - A local test pass is not proof of live agent discovery, approval enforcement
   or a GitHub Actions/PR pass. Record those checkpoints separately.
+
+Paste this scope into each new Agent chat, including the CLI:
+
+**Prompt:** Work on the sales application in
+`ws-part1-github-copilot/labs/starter` only. Read its README for business rules
+and run Python commands from that folder using its virtual environment.
+Do not read or copy presenter solutions, edit Part 2, or finish later labs.
+Create repository customizations/workflows at the fork root only when the
+current lab asks. Use read-only checks first and ask before overwriting files.
+Do not commit, push or create remote resources unless I explicitly ask.
+
+The presenter folder exists in the clone; these instructions guide behavior,
+not enforce access restrictions. Attach starter files explicitly when names
+such as `README.md` or `summarize.py` also exist elsewhere.
 
 When a lab says to commit, review first:
 
@@ -54,16 +73,22 @@ git diff --cached
 
 Then ask Copilot to commit the staged exercise with a short message and the
 required Co-authored-by trailer, or commit it yourself using your team's policy.
-Do not stage personal files or unrelated changes. Before GH7, push the completed
-local labs to `main` with `git push`.
+Do not stage personal files or unrelated changes. From the application folder,
+`git add .` stages application changes only; GH5/GH7 give separate commands for
+root customizations/workflows. Git commits and branch switches affect the whole
+fork. Before GH7, push the completed local labs to your fork's `main` with
+`git push origin main`. Check `gh repo set-default --view` points to your fork.
 
 ## If you get stuck
 
 1. Ask Copilot to explain the exact error before making more changes.
 2. Compare the command and current directory with the lab instructions.
 3. Save your work with a local commit or copy the folder to a new backup location.
-4. For a fresh start, copy the starter into a **new** folder. Do not overwrite your work.
+4. For a fresh start, clone an untouched fork/baseline into a **new** folder.
+   A clone of your already-modified fork contains your latest changes, not a reset.
+   Ask the presenter for a suitable starting commit; do not overwrite your work.
 5. Ask the presenter for the smallest relevant solution, not the whole completed project.
 
 The [presenter guide](./presenter/README.md) contains answers, templates and
-rehearsal checks. It is not needed in the attendee repository.
+rehearsal checks. Consult it only when the presenter directs you to a relevant
+template; do not let an agent substitute the complete answer for an exercise.

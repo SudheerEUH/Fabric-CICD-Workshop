@@ -4,16 +4,20 @@ The first half of the workshop. It introduces GitHub Copilot, sets up the enviro
 habits used in [Part 2 — Fabric CI/CD](../ws-part2-Fabric-CICD/workshop-part2-Fabric-CICD.md), where Copilot drives Git, branching, pull
 requests and deployment pipelines through chat.
 
-Part 1 is self-contained. It uses its own throwaway repository (`copilot-workshop-demo`), so nothing
-here touches the Fabric workspaces or the `fabric-cicd-workshop` repository used in Part 2.
+Part 1 is self-contained. Each attendee forks this public workshop repository,
+clones their fork and edits the existing sales starter directly. Nothing here
+touches the Fabric workspaces or the separate private `fabric-cicd-workshop`
+repository used in Part 2.
 
 ## Hands-on materials
 
 Use the [lab index](./labs/README.md) alongside this feature guide. It provides
 short steps, prompts, checks and recovery guidance for GH0 through GH9.
-Start with [GH2 setup](./labs/02-setup.md): copy only the supplied
-[starter project](./labs/starter/) into your own demo repository and open that
-folder in VS Code. Do not include the presenter answers in the attendee workspace.
+Start with [GH2 setup](./labs/02-setup.md): fork and clone
+`redhatpeter/Fabric-CICD-Workshop`, open the **fork root** in VS Code, and work in
+the existing [starter project](./labs/starter/). Do not copy files or initialize
+a second Git repository. Presenter answers are included in the clone; explicitly
+scope agents to starter and do not use those answers during exercises.
 
 The labs use one synthetic sales dataset, with a different small task per topic:
 editor helper, average fix, customization, optional filter, input validation and
@@ -57,13 +61,14 @@ reference solutions, customization templates and rehearsal commands.
 | Attendee | A developer with a Copilot seat |
 | Org admin | The attendee (or a colleague) who is an **owner** of the GitHub organization or enterprise that grants the seats. Needed for GH1 and the admin parts of GH7 |
 | Presenter | Runs the walkthrough. Does not need admin rights if an org admin attends |
-| `copilot-workshop-demo` | Private demo repository created in GH2 and used through GH9 |
-| `redhatpeter` / your account | The GitHub account that owns the demo repository. Use a personal account or an organization where you can create repositories |
+| `YOUR_GITHUB_LOGIN/Fabric-CICD-Workshop` | Your public fork, cloned in GH2 and used through GH9 |
+| `redhatpeter/Fabric-CICD-Workshop` | Upstream materials; do not send attendee issues, pushes or PRs here |
+| Application folder | `ws-part1-github-copilot/labs/starter` inside your clone; run Python/pip/pytest here |
 | Starter kit | The set of Copilot customization files built in GH5 and carried to Part 2 |
 
 ```text
 VS Code (editor, chat, agent) ──┐
-Copilot CLI (terminal) ─────────┼──▶ copilot-workshop-demo (GitHub) ──▶ github.com: Chat, cloud agent,
+Copilot CLI (terminal) ─────────┼──▶ your workshop fork (GitHub) ──▶ github.com: Chat, cloud agent,
 gh CLI ─────────────────────────┘                                        code review, Spaces
                                           └──▶ Starter kit ──▶ Part 2 (fabric-cicd-workshop)
 ```
@@ -152,7 +157,7 @@ The org admin attendee confirms, and the presenter ticks off:
 - [ ] Copilot code review is enabled
 - [ ] Third-party MCP servers: decided and set (needed only for the optional MCP demo)
 - [ ] Copilot Spaces: enabled for the organization
-- [ ] Attendees can create a private repository in the organization, or in their own account
+- [ ] Attendees can create a public fork and enable Issues/Actions in it; organization policy allows this workflow
 - [ ] Any network allowlist for `github.com`, `api.github.com`, `*.githubcopilot.com` and the model
   endpoints is in place
 
@@ -222,17 +227,35 @@ Skip this section if sign-in worked.
   `*.githubcopilot.com` and `*.githubusercontent.com`.
 - Never paste passwords or tokens into chat.
 
-### 2.4 Create the demo repository and project
+### 2.4 Fork and clone the workshop
 
 Follow [GH2 setup](./labs/02-setup.md) for the exact Windows and macOS/WSL commands:
 
-1. Copy only the starter contents into a new `copilot-workshop-demo` folder.
-2. Open that folder, create a virtual environment and install the test dependency.
-3. Run the baseline script and tests.
-4. Commit the baseline, then create and push a private GitHub repository.
+1. Fork `redhatpeter/Fabric-CICD-Workshop` into your GitHub account.
+2. Clone your fork and open the clone root in VS Code.
+3. Run `gh repo set-default origin` so GitHub CLI targets your fork, not upstream.
+4. In the terminal, `cd ws-part1-github-copilot/labs/starter`.
+5. Create `.venv` there, install the test dependency, and run the existing baseline.
 
-Do not ask Copilot to regenerate the seed files: identical starters make the
-checks and troubleshooting consistent for everyone.
+No copying, `git init`, baseline commit or new repository creation is needed.
+Keep root `.github`/`AGENTS.md` changes in the fork root; do application work in
+starter. The fork is public: never add private data. Part 2 still uses its own
+private repository rather than syncing this public fork to Fabric.
+
+**Required before any lab tests:** from the application folder, activate its
+virtual environment and install/verify the development dependency:
+
+```text
+python -m pip install -r requirements-dev.txt
+python -m pytest --version
+```
+
+Expect `pytest 8.4.2` with the supplied requirements. If Python reports
+`No module named pytest`, the active environment is missing it; check
+`python -c "import sys; print(sys.executable)"` and install with that interpreter.
+The `(.venv)` prompt can refer to a different project's environment. See
+[GH2 setup](./labs/02-setup.md#2-create-a-virtual-environment) for activation and
+interpreter selection.
 
 ### 2.5 Starter files
 
@@ -240,7 +263,7 @@ The [starter project](./labs/starter/) contains the script, synthetic CSV fixtur
 two baseline tests, pytest configuration and a pinned development dependency.
 Its [README](./labs/starter/README.md) defines the business rules.
 
-Run `python summarize.py data/sales.csv` from your demo root. The starter reports
+Run `python summarize.py data/sales.csv` from the application folder. The starter reports
 the regional totals and an average of 118.75. Some behavior is deliberately
 unfinished. Do not fix it all during setup; each later lab has a distinct task.
 
@@ -248,10 +271,12 @@ unfinished. Do not fix it all during setup; each later lab has a distinct task.
 
 Send this single prompt in the Chat view:
 
-**Prompt:** "Use my project virtual environment. Check that git and gh work, that I'm signed
-in to gh, that summarize.py runs on data/sales.csv, and that python -m pytest -q
-reports two passing baseline tests. Also check copilot if doing the optional CLI
-lab, and Node.js if I installed it through npm. Report OK or not OK. Do not print tokens."
+**Prompt:** "Work only in ws-part1-github-copilot/labs/starter and use its virtual
+environment. Check git and gh, confirm origin and gh's default repository point
+to my fork, and run summarize.py on data/sales.csv plus python -m pytest -q from
+starter. Expect two baseline tests. Do not read presenter answers or run their
+tests. Check copilot if doing the optional CLI lab, and Node.js if I installed
+it through npm. Report OK or not OK. Do not print tokens."
 
 All lines OK means you can move on. Fix anything marked not OK first.
 
@@ -313,7 +338,7 @@ every diff before you commit.
 Follow [GH5 lab](./labs/05-customization.md) for the creation prompts and behavior
 checks. The presenter has reference templates if generation needs correction.
 
-Build the **starter kit** in the demo repo. These files are loaded automatically (instructions) or on
+Build the **starter kit at your fork root**, not under starter. These files are loaded automatically (instructions) or on
 demand (prompts, agents, skills).
 
 | Customization | File | When it applies | Route |
@@ -334,7 +359,7 @@ Agent Customizations editor.
 | Task | Route | Sample prompt |
 | --- | --- | --- |
 | Repository instructions with the ground rules | 🟢 | "Create `.github/copilot-instructions.md` with these rules: [paste the ground rules]. Also say: Python 3, use type hints, add tests for new code." |
-| Path-specific instructions | 🟢 | "Create `.github/instructions/python.instructions.md` with `applyTo: '**/*.py'` and rules: use `pytest`, keep functions small." |
+| Path-specific instructions | 🟢 | "Create root `.github/instructions/python.instructions.md` with `applyTo: 'ws-part1-github-copilot/labs/starter/**/*.py'`; use pytest and small functions." |
 | Prompt file | 🟢 | "Create `.github/prompts/review-changes.prompt.md` using the reviewer agent to review a supplied diff for bugs and missing tests. No edits or command execution." |
 | Read-only reviewer agent | 🟢 | "Create `.github/agents/reviewer.agent.md`, a read-only reviewer that can read and search files but not edit or run commands." |
 | Skill | 🟢 | "Create a skill `.github/skills/summarize-csv/SKILL.md` that explains how to run `summarize.py` and read its output." |
@@ -352,7 +377,7 @@ After each file, verify it:
 | Task | Route | Sample prompt |
 | --- | --- | --- |
 | Add the GitHub MCP server in VS Code | 🟡 | Open the Command Palette, run **MCP: Add Server**, and follow the prompts for the GitHub server. Sign in when asked |
-| Use it | 🟢 | "List the open issues in `copilot-workshop-demo`." |
+| Use it | 🟢 | "List open issues in `YOUR_GITHUB_LOGIN/Fabric-CICD-Workshop`, not upstream." |
 
 Only add MCP servers you trust. Each server adds tools the agent can call. On Business and Enterprise,
 organization policy can restrict third-party servers.
@@ -401,8 +426,12 @@ Follow [GH7 lab](./labs/07-github.md). Use the supplied invalid-data fixtures fo
 an input-validation issue; leave empty-input handling for GH9. Add the test and
 agent-setup workflows before assigning the cloud task. Local fallback steps are included.
 
-Most of this section is 🔴 (portal). Run it in `copilot-workshop-demo`. Steps that need org policy are
-marked.
+Most of this section is 🔴 (portal). Run it in **your fork**, never upstream.
+Enable Issues and Actions there if disabled. Steps that need org policy are marked.
+Keep workflows in root `.github/workflows` with Python run steps targeting
+`ws-part1-github-copilot/labs/starter`. Use explicit `--repo
+YOUR_GITHUB_LOGIN/Fabric-CICD-Workshop` for issue/PR creation so a fork does not
+silently target upstream.
 
 | Task | Route | Notes |
 | --- | --- | --- |
@@ -505,7 +534,8 @@ Before you start Part 2, check that you can:
 
 ### Starter kit to carry into Part 2
 
-Copy these from `copilot-workshop-demo` into `fabric-cicd-workshop` after Part 2 UC0.3 creates it:
+Copy these from your fork root into the separate private `fabric-cicd-workshop`
+repository after Part 2 UC0.3 creates it:
 
 | File | Why |
 | --- | --- |
@@ -513,11 +543,12 @@ Copy these from `copilot-workshop-demo` into `fabric-cicd-workshop` after Part 2
 | `.github/prompts/review-changes.prompt.md` | Reviews a diff before commit or pull request |
 | `.github/agents/reviewer.agent.md` | Read-only reviewer for the merge exercise in Part 2 UC5 |
 
-Remove or edit anything specific to `summarize.py`.
+Remove sales-specific rules and paths to starter, and rewrite the reviewer's
+README reference for Part 2. Do not use the public fork for Fabric Git sync.
 
 ### Cleanup
 
-- Delete the demo repository when you finish, or archive it.
+- Keep or archive your fork when finished; do not delete it automatically.
 - Revoke any token you created. Remove any MCP server you added only for the workshop.
 - Sign out of accounts on shared machines.
 
@@ -565,9 +596,13 @@ authentication and admin checks into prework to reduce live setup time.
   empty input, validation and CLI error behavior.
 - Staged local rehearsal: helper, average fix, optional filter, validation and
   capstone checks pass, including the path that skips the optional filter.
-- Material checks: clean starter copy, reference CLI examples, Python syntax and
-  local Markdown file targets pass. Copy only GH2's allowlisted starter files,
-  not a working copy's Git metadata or environment folders.
+- Material checks cover starter/reference CLI examples, Python syntax and
+  local Markdown file targets. Additional fork-layout checks were added during
+  the 2026-11-02 onboarding update; no live forks/issues/PRs are created by them.
+- Fork-layout rehearsal (2026-11-02): 5 material checks, a fresh starter-local
+  environment with 2 baseline tests, and the 24 reference tests passed.
+  Root workflow paths and customization YAML were checked locally; GitHub
+  forking and live Actions/agent/PR behavior still require manual verification.
 - See the [presenter guide](./labs/presenter/README.md) to repeat these checks.
   Its dry-run record distinguishes explicitly applied local changes from live
   Copilot actions; no remote repositories/issues/PRs were created during rehearsal.

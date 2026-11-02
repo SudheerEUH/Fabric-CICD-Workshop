@@ -7,12 +7,19 @@ is deliberately unfinished; follow the workshop labs rather than fixing everythi
 ## Run
 
 Use the workshop setup instructions to create a virtual environment and install
-the development dependency, then:
+the development dependency **in this folder**. Open your fork root in VS Code,
+but run the following in its terminal from `ws-part1-github-copilot/labs/starter`:
 
 ```text
+python -m pip install -r requirements-dev.txt
+python -m pytest --version
 python summarize.py data/sales.csv
 python -m pytest -q
 ```
+
+Work directly in this folder in your fork; no copying or `git init` is needed.
+Put repository customizations and GitHub workflows at the **fork root** in GH5/GH7,
+not inside this folder. Read the current lab and avoid presenter answers.
 
 The two supplied tests check loading and regional totals. Passing them does not
 prove the average or edge cases are correct. Add tests as you work.

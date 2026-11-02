@@ -3,7 +3,12 @@
 **Time:** 20 minutes. **Starting point:** GH3 committed; the original average is unchanged.
 **Goal:** see the difference between explanation, planning and implementation.
 
-Read the average rule in your demo README. The total is 475 across three regions,
+Use the [scope prompt](./README.md#working-conventions); every file in this lab
+is under `ws-part1-github-copilot/labs/starter` in your fork. Run shell commands
+from that application folder with its `.venv` active.
+
+Read the average rule in the starter README, not the repository overview.
+The total is 475 across three regions,
 so the expected average is approximately **158.33**, not the current 118.75.
 
 Before starting, run `git status --short`: it should print nothing. Confirm

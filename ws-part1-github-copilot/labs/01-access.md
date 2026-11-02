@@ -4,9 +4,10 @@
 
 - [ ] Sign in to VS Code with the GitHub account that has your Copilot access.
 - [ ] Confirm that Chat responds in VS Code.
-- [ ] Confirm that you can create a private demo repository.
+- [ ] Confirm that you can fork the public workshop into your account, push
+      branches, enable Issues/Actions and merge PRs in your fork.
 - [ ] Ask the organizer whether cloud agent, Copilot code review and Spaces are enabled.
-- [ ] Use only synthetic data and the throwaway demo repository.
+- [ ] Use only synthetic data; the attendee fork is public.
 
 ## Check the right account
 
@@ -23,8 +24,10 @@ not required for any Part 1 lab. Do not change their sign-ins to fix Copilot.
    already signed in. Never share the credential store or authentication tokens.
 3. If GH6 is planned, run `copilot --version` and complete its own sign-in.
    Working `gh` authentication alone does not prove Copilot CLI access.
-4. Confirm with the organizer that GitHub Actions can run on your private demo
-   repository. GH7 and GH9 need a real test check, not only a review comment.
+4. Confirm with the organizer that public forks are allowed and GitHub Actions
+   and cloud-agent features can run on your fork. GH7 and GH9 need a real test
+   check, not only a review comment. If forks are prohibited, use an approved
+   alternative or observe; do not make a public copy of private work.
 
 If GitHub authentication opens the wrong browser account, choose the intended
 GitHub identity in that flow. Do not delete all saved accounts or weaken an

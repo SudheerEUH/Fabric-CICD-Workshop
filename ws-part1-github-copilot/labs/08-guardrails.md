@@ -8,7 +8,8 @@ so you can tell whether the agent changed tracked files. Use a regular Agent,
 not the tool-restricted reviewer: a reviewer cannot demonstrate denying a write
 it never had permission to attempt.
 
-1. In VS Code Explorer, create `output/approval-demo.txt` in the demo repository.
+1. In VS Code Explorer, create
+   `ws-part1-github-copilot/labs/starter/output/approval-demo.txt` in your fork.
    Put `KEEP THIS PRACTICE TEXT` in it and save. This is disposable, ignored data.
 2. In a new regular Agent chat, paste these approval ground rules:
 
@@ -18,7 +19,8 @@ it never had permission to attempt.
 
    Then ask:
 
-   **Prompt:** Inspect only output/approval-demo.txt. Propose replacing its content with
+   **Prompt:** Inspect only
+   ws-part1-github-copilot/labs/starter/output/approval-demo.txt. Propose replacing its content with
    "Replacement report". Show the exact path and proposed content, then
    stop and wait for approval. Do not write anything yet.
 

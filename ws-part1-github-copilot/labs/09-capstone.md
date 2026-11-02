@@ -4,6 +4,30 @@
 The optional GH6 filter is not required.
 **Goal:** complete a small plan-to-PR workflow yourself.
 
+## Prerequisites
+
+Keep your **fork root** open in VS Code. In the terminal, work directly in
+`ws-part1-github-copilot/labs/starter` inside that fork.
+Complete [GH2's virtual environment setup](./02-setup.md#2-create-a-virtual-environment)
+and activate that environment in this terminal. Before starting the capstone:
+
+```text
+python -c "import sys; print(sys.executable)"
+python -m pip install -r requirements-dev.txt
+python -m pytest --version
+```
+
+The interpreter should belong to `starter/.venv`, and the version check should
+report `pytest 8.4.2` for the supplied requirements. `No module named pytest`
+means the active interpreter is missing the test dependency; install it with the
+command above before continuing. Do not install globally or assume the `(.venv)`
+prompt proves the correct environment is active.
+
+Run `gh repo set-default --view`: it must name your fork. If necessary use
+`gh repo set-default origin` and verify `gh repo view --json nameWithOwner,url`.
+Replace `YOUR_GITHUB_LOGIN` below with your GitHub username. Issues and PRs must
+stay in your fork; do not send workshop exercises to the upstream repository.
+
 First run `python -m pytest -q` and the normal sales report. Expect the validated
 GH7 behavior and an average of 158.33 before starting. If GH7 was skipped, finish
 its local validation fallback first; the capstone must preserve validation, not
@@ -12,7 +36,9 @@ record the PR/merge steps as blocked instead of claiming full completion.
 
 ## Task
 
-**Prompt:** A CSV with the correct header but no sales rows is valid. It should print
+**Prompt:** Work only in ws-part1-github-copilot/labs/starter and read that folder's
+README. Do not read presenter answers or edit Part 2. Run Python and pytest from
+starter. A CSV with the correct header but no sales rows is valid. It should print
 only "Average per region: 0.00" and exit successfully. The summary function
 should return ({}, 0.0). Do not treat a zero-byte file with no header as valid.
 Keep existing validation and normal report behavior. Add regression tests.
@@ -53,8 +79,11 @@ Keep existing validation and normal report behavior. Add regression tests.
 
    ```text
    git push -u origin fix/empty-input
-   gh pr create --base main --title "Handle header-only sales CSV" --body "Return an empty summary with a zero average; add regression tests."
+   gh pr create --repo YOUR_GITHUB_LOGIN/Fabric-CICD-Workshop --base main --head fix/empty-input --title "Handle header-only sales CSV" --body "Return an empty summary with a zero average; add regression tests."
    ```
+
+   Confirm the PR page's **base repository is your fork** and base branch is
+   `main`. Fork PRs can otherwise target upstream; do not omit `--repo`.
 
 8. Request Copilot review if available. Otherwise review manually.
    Wait for the **tests** check to pass; a review comment is not a test run.
@@ -67,7 +96,7 @@ Keep existing validation and normal report behavior. Add regression tests.
    ```text
    git status --short
    git switch main
-   git pull --ff-only
+   git pull --ff-only origin main
    python -m pytest -q
    python summarize.py data/empty.csv
    python summarize.py data/sales.csv
@@ -85,6 +114,9 @@ finish the PR steps when access is restored.
 Carry only the reviewed repository instructions, review prompt and reviewer agent
 into Part 2. The prompt references the reviewer, so keep both files together.
 Remove sales-specific rules. Part 2 has its own Azure/Fabric setup and data.
+Copy the kit from your fork root into Part 2's **separate private attendee
+repository**. Do not use the public Part 1 fork as the Fabric Git-sync repository.
+Remove starter-specific paths and rewrite the reviewer's README reference too.
 
-Keep or archive your demo repository for reference. Do not delete anything
+Keep or archive your fork for reference. Do not delete anything
 automatically. Remove only workshop-only MCP connections if you added them.

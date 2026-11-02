@@ -3,6 +3,11 @@
 **Time:** 20 minutes. **Starting point:** GH2, two baseline tests passing.
 **Goal:** implement one helper without changing report calculations yet.
 
+Keep the fork root open in VS Code. Edit files under
+`ws-part1-github-copilot/labs/starter`; run the commands below from that
+application folder with its `.venv` active. Use the
+[scope prompt](./README.md#working-conventions) in each new chat.
+
 ## Try it
 
 1. Open `summarize.py`. In `top_region`, replace the `raise NotImplementedError(...)`
@@ -23,7 +28,8 @@
 4. Rename `load` to `load_rows` in the editor. Review suggested call-site edits,
    including the test imports. If suggestions do not appear, use Rename Symbol.
    Start Rename Symbol on the function name, review its preview, and save all
-   changed files. Search the demo for `load(` and `import load` to catch stale
+   changed files. Limit the rename/search to `ws-part1-github-copilot/labs/starter`;
+   search for `load(` and `import load` to catch stale
    calls/imports; do not rename unrelated methods or built-ins.
 5. Attach `data/sales.csv` in Chat:
 
