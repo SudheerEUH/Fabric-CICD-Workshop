@@ -4,7 +4,7 @@ The attendee's fork includes this folder. The reference solution is the final
 state, not a starter. Tell attendees and their agents not to read/copy it unless
 you explicitly provide one relevant template. Opening a folder is not an access
 boundary; keep the exercise scoped to `ws-part1-github-copilot/labs/starter`.
-# #Sudheer's repo 
+# #Sudheer's 
 ## Rehearse locally
 
 From the Part 1 `labs` folder:
