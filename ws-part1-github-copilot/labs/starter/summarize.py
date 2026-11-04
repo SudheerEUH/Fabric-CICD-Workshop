@@ -7,12 +7,13 @@ def load_rows(path):
         return list(csv.DictReader(source))
 
 
-def summarize(rows):
-    totals = {}
+def summarize(rows: list[dict[str, str]]) -> tuple[dict[str, float], float]:
+    """Return regional totals and the average."""
+    totals: dict[str, float] = {}
     for row in rows:
         region = row["region"]
         totals[region] = totals.get(region, 0) + float(row["amount"])
-    average = sum(totals.values()) / len(rows)
+    average = sum(totals.values()) / len(totals) if totals else 0.0
     return totals, average
 
 
